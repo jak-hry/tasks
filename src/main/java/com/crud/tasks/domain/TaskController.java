@@ -1,6 +1,5 @@
 package com.crud.tasks.domain;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,8 +14,8 @@ public class TaskController {
         return new ArrayList<>();
     }
 
-    @GetMapping
-    public TaskDto getTask(Long taskId) {
+    @GetMapping("/{id}")
+    public TaskDto getTask(@PathVariable Long id) {
         return new TaskDto(1L, "Test title", "test_content");
     }
 
