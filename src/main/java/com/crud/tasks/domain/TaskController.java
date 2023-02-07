@@ -14,24 +14,25 @@ public class TaskController {
         return new ArrayList<>();
     }
 
-    @GetMapping("/{id}")
-    public TaskDto getTask(@PathVariable Long id) {
+    @GetMapping("/get/{taskId}")
+    public TaskDto getTask(@PathVariable Long taskId) {
         return new TaskDto(1L, "Test title", "test_content");
     }
 
-    @DeleteMapping
-    public void deleteTask(Long taskId) {
-
+    @DeleteMapping("/{taskId}")
+    public void deleteTask(@PathVariable Long taskId) {
+        getTasks().remove(taskId);
     }
 
     @PutMapping
-    public TaskDto updateTask(TaskDto task) {
+    public TaskDto updateTask(@RequestBody TaskDto task) {
         return new TaskDto(1L, "Edited test title", "Test content");
     }
 
     @PostMapping
-    public void createTask(TaskDto task) {
-
+    public void createTask(@RequestBody TaskDto task) {
+        if (!(getTasks().contains(task))) {
+            getTasks().add(task);
+        }
     }
-
 }
