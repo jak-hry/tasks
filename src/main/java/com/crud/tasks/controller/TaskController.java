@@ -5,10 +5,11 @@ import com.crud.tasks.domain.TaskDto;
 import com.crud.tasks.mapper.TaskMapper;
 import com.crud.tasks.service.DbService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/tasks")
@@ -19,42 +20,37 @@ public class TaskController {
     private final TaskMapper taskMapper;
 
     @GetMapping
-    public List<TaskDto> getTasks() {
+    public ResponseEntity<List<TaskDto>> getTasks() {
         List<Task> taskList = service.getAllTasks();
-        return taskMapper.mapToTaskDtolist(taskList);
+        return ResponseEntity.ok(taskMapper.mapToTaskDtolist(taskList));
     }
 
-    @GetMapping("/get/{taskId}")
-    public TaskDto getTask(@PathVariable Long taskId) {
-        Optional<Task> task = service.findTaskById(taskId);
-        if (task.isPresent()) {
-            return taskMapper.mapToTaskDto(task.get());
-        } else {
-            return new TaskDto();
-        }
+    @GetMapping("/{taskId}")
+    public ResponseEntity<TaskDto> getTask(@PathVariable Long taskId) throws TaskNotFoundException {
+        return ResponseEntity.ok(taskMapper.mapToTaskDto(service.findTaskById(taskId)));
     }
 
     @DeleteMapping("/{taskId}")
-    public String deleteTask(@PathVariable Long taskId) {
-        if (!getTasks().remove(taskId)) {
-            return "Task with id: \"" + taskId + "\" does not exist";
+    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) throws TaskNotFoundException {
+        if (!(service.findTaskById(taskId).toString().isEmpty())) {
+            service.removeTask(taskId);
+            return ResponseEntity.ok().build();
         } else {
-            return "Task with id: \"" + taskId + "\" removed";
+            return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping
-    public TaskDto updateTask(@RequestBody TaskDto task) {
-        return new TaskDto(1L, "Edited test title", "Test content");
+    public ResponseEntity<TaskDto> updateTask(@RequestBody TaskDto taskDto) {
+        Task task = taskMapper.mapToTask(taskDto);
+        Task savedTask = service.saveTask(task);
+        return ResponseEntity.ok(taskMapper.mapToTaskDto(savedTask));
     }
 
-    @PostMapping
-    public String createTask(@RequestBody TaskDto task) {
-        if (!(getTasks().contains(task))) {
-            getTasks().add(task);
-            return "task with title: \"" + task.getTitle() + "\" added";
-        } else {
-            return "Task with title: \"" + task.getTitle() + "\" does not exist";
-        }
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> createTask(@RequestBody TaskDto taskDto) {
+        Task task = taskMapper.mapToTask(taskDto);
+        service.saveTask(task);
+        return ResponseEntity.ok().build();
     }
 }
