@@ -7,7 +7,6 @@ import com.crud.tasks.trello.config.TrelloConfig;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +30,7 @@ public class TrelloClient {
 
         LOGGER.info("starting filtering boards...");
         try {
-            TrelloBoardDto[] boardsResponse = restTemplate.getForObject(createURi(), TrelloBoardDto[].class);
+            TrelloBoardDto[] boardsResponse = restTemplate.getForObject(getURi(), TrelloBoardDto[].class);
             return Optional.ofNullable(boardsResponse)
                     .map(Arrays::asList)
                     .orElse(Collections.emptyList());
@@ -50,9 +49,10 @@ public class TrelloClient {
     }
 
 
-    private URI createURi() {
+    private URI getURi() {
 
-        return UriComponentsBuilder.fromHttpUrl(trelloConfig.getTrelloApiEndpoint() + "/members/jakhry/boards")
+        return UriComponentsBuilder.fromHttpUrl(trelloConfig.getTrelloApiEndpoint() + "/members/" +
+                        trelloConfig.getTrelloUserName() + "/boards")
                 .queryParam("key", trelloConfig.getTrelloAppKey())
                 .queryParam("token", trelloConfig.getTrelloToken())
                 .queryParam("fields", "name,id")
