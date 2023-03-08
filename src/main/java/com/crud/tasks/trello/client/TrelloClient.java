@@ -3,6 +3,7 @@ package com.crud.tasks.trello.client;
 import com.crud.tasks.domain.CreatedTrelloCard;
 import com.crud.tasks.domain.TrelloBoardDto;
 import com.crud.tasks.domain.TrelloCardDto;
+import com.crud.tasks.trello.config.TrelloConfig;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +24,12 @@ import java.util.Optional;
 public class TrelloClient {
 
     private final RestTemplate restTemplate;
+    private final TrelloConfig trelloConfig;
     private final static Logger LOGGER = LoggerFactory.getLogger(TrelloClient.class);
-
-    @Value("${trello.api.endpoint.prod}")
-    private String trelloApiEndpoint;
-    @Value("${trello.app.key}")
-    private String trelloAppKey;
-    @Value("${trello.app.token}")
-    private String trelloToken;
-    @Value("${trello.app.username}")
-    private String trelloUserName;
 
     public List<TrelloBoardDto> getTrelloBoards() {
 
+        LOGGER.info("starting filtering boards...");
         try {
             TrelloBoardDto[] boardsResponse = restTemplate.getForObject(createURi(), TrelloBoardDto[].class);
             return Optional.ofNullable(boardsResponse)
@@ -48,8 +42,6 @@ public class TrelloClient {
     }
 
     public List<TrelloBoardDto> getFilteredBoards() {
-
-        LOGGER.info("starting filtering boards...");
         return getTrelloBoards().stream()
                 .filter(boardName -> boardName.getName() != null)
                 .filter(boardId -> boardId.getId() != null)
@@ -60,9 +52,9 @@ public class TrelloClient {
 
     private URI createURi() {
 
-        return UriComponentsBuilder.fromHttpUrl(trelloApiEndpoint + "/members/jakhry/boards")
-                .queryParam("key", trelloAppKey)
-                .queryParam("token", trelloToken)
+        return UriComponentsBuilder.fromHttpUrl(trelloConfig.getTrelloApiEndpoint() + "/members/jakhry/boards")
+                .queryParam("key", trelloConfig.getTrelloAppKey())
+                .queryParam("token", trelloConfig.getTrelloToken())
                 .queryParam("fields", "name,id")
                 .queryParam("lists", "all")
                 .build()
@@ -72,9 +64,9 @@ public class TrelloClient {
 
     public CreatedTrelloCard createNewCard(TrelloCardDto trelloCardDto) {
 
-        URI uri = UriComponentsBuilder.fromHttpUrl(trelloApiEndpoint + "/cards")
-                .queryParam("key", trelloAppKey)
-                .queryParam("token", trelloToken)
+        URI uri = UriComponentsBuilder.fromHttpUrl(trelloConfig.getTrelloApiEndpoint() + "/cards")
+                .queryParam("key", trelloConfig.getTrelloAppKey())
+                .queryParam("token", trelloConfig.getTrelloToken())
                 .queryParam("name", trelloCardDto.getName())
                 .queryParam("desc", trelloCardDto.getDescription())
                 .queryParam("pos", trelloCardDto.getPos())
