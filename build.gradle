@@ -26,7 +26,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat:3.0.3'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat:3.0.4'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
 }
 
 tasks.named('test') {
