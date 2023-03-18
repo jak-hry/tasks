@@ -32,7 +32,7 @@ class SimpleEmailServiceTest {
                 .mailTo("test@test.com")
                 .subject("Test")
                 .message("Test Message")
-//                .toCc(new String[] {"tests@gmail.com", "task@mail.com"})
+                .toCc(new String[] {"tests@gmail.com", "task@mail.com"})
                 .build();
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
