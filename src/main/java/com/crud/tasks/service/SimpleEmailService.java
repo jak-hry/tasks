@@ -35,7 +35,7 @@ public class SimpleEmailService {
         if (mail.getToCc() == null || mail.getToCc().length == 0) {
             log.info("No additional from entered");
         } else {
-            mailMessage.setCc(mailMessage.getCc());
+            mailMessage.setCc(mail.getToCc());
         }
         return mailMessage;
     }
