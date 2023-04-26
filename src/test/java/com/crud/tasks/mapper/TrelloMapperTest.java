@@ -1,21 +1,17 @@
-package com.crud.tasks.trello.facade;
+package com.crud.tasks.mapper;
 
 import com.crud.tasks.domain.*;
-import com.crud.tasks.mapper.TrelloMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@SpringBootTest
+
 public class TrelloMapperTest {
 
-    @Autowired
-    private TrelloMapper trelloMapper;
+    private TrelloMapper trelloMapper = new TrelloMapper();
 
     @Test
     public void testMapToBoards() {
@@ -26,12 +22,13 @@ public class TrelloMapperTest {
 
         //When
         List<TrelloBoard> result = trelloMapper.mapToBoards(trelloBoardDtoList);
+        TrelloList trelloList = result.get(result.size() - 1).getLists().get(0);
 
         //Then
         assertEquals(1, result.size());
-        assertEquals("id1", result.get(result.size()-1).getLists().get(0).getId());
-        assertEquals("name1", result.get(result.size()-1).getLists().get(0).getName());
-        assertFalse(result.get(result.size()-1).getLists().get(0).isClosed());
+        assertEquals("id1", trelloList.getId());
+        assertEquals("name1", trelloList.getName());
+        assertFalse(trelloList.isClosed());
     }
 
     @Test
@@ -43,12 +40,13 @@ public class TrelloMapperTest {
 
         //When
         List<TrelloBoardDto> result = trelloMapper.mapToBoardsDto(trelloBoardList);
+        TrelloListDto trelloListDto = result.get(result.size() - 1).getLists().get(0);
 
         //Then
         assertEquals(1, result.size());
-        assertEquals("id1", result.get(result.size()-1).getLists().get(0).getId());
-        assertEquals("name1", result.get(result.size()-1).getLists().get(0).getName());
-        assertFalse(result.get(result.size()-1).getLists().get(0).isClosed());
+        assertEquals("id1", trelloListDto.getId());
+        assertEquals("name1", trelloListDto.getName());
+        assertFalse(trelloListDto.isClosed());
     }
 
     @Test
@@ -59,12 +57,14 @@ public class TrelloMapperTest {
 
         //When
         List<TrelloList> result = trelloMapper.mapToList(trelloListDtoList);
+        TrelloList trelloList = result.get(result.size() - 1);
+
 
         //Then
         assertEquals(1, result.size());
-        assertEquals("id", result.get(result.size()-1).getId());
-        assertEquals("name", result.get(result.size()-1).getName());
-        assertFalse(result.get(result.size()-1).isClosed());
+        assertEquals("id", trelloList.getId());
+        assertEquals("name", trelloList.getName());
+        assertFalse(trelloList.isClosed());
     }
 
     @Test
@@ -75,12 +75,13 @@ public class TrelloMapperTest {
 
         //When
         List<TrelloListDto> result = trelloMapper.mapToListDto(trelloListList);
+        TrelloListDto trelloListDto = result.get(result.size() - 1);
 
         //Then
         assertEquals(1, result.size());
-        assertEquals("id", result.get(result.size()-1).getId());
-        assertEquals("name", result.get(result.size()-1).getName());
-        assertFalse(result.get(result.size()-1).isClosed());
+        assertEquals("id", trelloListDto.getId());
+        assertEquals("name", trelloListDto.getName());
+        assertFalse(trelloListDto.isClosed());
     }
 
     @Test

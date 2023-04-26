@@ -21,4 +21,9 @@ public class TaskDto {
     private String title;
     @Column(name = "description")
     private String content;
+
+    public TaskDto(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
