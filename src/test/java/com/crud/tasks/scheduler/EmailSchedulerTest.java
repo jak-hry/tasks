@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-@SpringBootTest
 public class EmailSchedulerTest {
 
     @Mock
