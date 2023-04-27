@@ -1,10 +1,11 @@
 package com.crud.tasks.controller;
 
-import com.crud.tasks.domain.CreatedTrelloCardDto;
-import com.crud.tasks.domain.TrelloBoardDto;
-import com.crud.tasks.domain.TrelloCardDto;
-import com.crud.tasks.trello.facade.TrelloFacade;
+import com.crud.tasks.domain.Task;
+import com.crud.tasks.domain.TaskDto;
+import com.crud.tasks.mapper.TaskMapper;
+import com.crud.tasks.service.DbService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,15 +17,40 @@ import java.util.List;
 @CrossOrigin("*")
 public class TaskController {
 
-    private final TrelloFacade trelloFacade;
+    private final DbService service;
+    private final TaskMapper taskMapper;
 
-    @GetMapping("boards")
-    public ResponseEntity<List<TrelloBoardDto>> getTrelloBoards() {
-        return ResponseEntity.ok(trelloFacade.fetchTrelloBoards());
+    @GetMapping
+    public ResponseEntity<List<TaskDto>> getTasks() {
+        List<Task> tasks = service.getAllTasks();
+        return ResponseEntity.ok(taskMapper.mapToTaskDtolist(tasks));
     }
 
-    @PostMapping("cards")
-    public ResponseEntity<CreatedTrelloCardDto> createTrelloCard(@RequestBody TrelloCardDto trelloCardDto) {
-        return ResponseEntity.ok(trelloFacade.createCard(trelloCardDto));
+    @GetMapping("/{taskId}")
+    public ResponseEntity<TaskDto> getTask(@PathVariable Long taskId) throws TaskNotFoundException {
+        return ResponseEntity.ok(taskMapper.mapToTaskDto(service.findTaskById(taskId)));
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskDto> createTask(@RequestBody TaskDto taskDto) {
+        Task task = taskMapper.mapToTask(taskDto);
+        service.saveTask(task);
+        return ResponseEntity.ok(taskMapper.mapToTaskDto(task));
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskDto> updateTask(@RequestBody TaskDto taskDto) {
+        Task task = taskMapper.mapToTask(taskDto);
+        Task savedTask = service.saveTask(task);
+        return ResponseEntity.ok(taskMapper.mapToTaskDto(savedTask));
+    }
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) throws TaskNotFoundException {
+        if (!(service.findTaskById(taskId).toString().isEmpty())) {
+            service.removeTask(taskId);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
