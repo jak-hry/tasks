@@ -9,9 +9,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
+@SpringBootTest
 public class EmailSchedulerTest {
 
     @Mock
@@ -27,7 +27,7 @@ public class EmailSchedulerTest {
     public void sendInformationEmailWithZeroTasks() {
 
         //Given && When
-        Mockito.when(taskRepository.count()).thenReturn(0L);
+        when(taskRepository.count()).thenReturn(0L);
         EmailScheduler emailScheduler = new EmailScheduler(simpleEmailService, taskRepository, adminConfig);
         emailScheduler.sendInformationEmail();
 
@@ -42,7 +42,7 @@ public class EmailSchedulerTest {
     public void sendInformationEmailWithOneTask() {
 
         //Given && When
-        Mockito.when(taskRepository.count()).thenReturn(1L);
+        when(taskRepository.count()).thenReturn(1L);
         EmailScheduler emailScheduler = new EmailScheduler(simpleEmailService, taskRepository, adminConfig);
         emailScheduler.sendInformationEmail();
 
@@ -57,7 +57,7 @@ public class EmailSchedulerTest {
     public void sendInformationEmailWithMultipleTasks() {
 
         //Given && When
-        Mockito.when(taskRepository.count()).thenReturn(5L);
+        when(taskRepository.count()).thenReturn(5L);
         EmailScheduler emailScheduler = new EmailScheduler(simpleEmailService, taskRepository, adminConfig);
         emailScheduler.sendInformationEmail();
 
