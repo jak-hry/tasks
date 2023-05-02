@@ -1,0 +1,45 @@
+ALTER TABLE books ADD BESTSELLER BOOLEAN DEFAULT 0;
+
+DELIMITER $$
+
+CREATE PROCEDURE UpdateBestsellers()
+BEGIN
+    DECLARE COUNT, DAYS, ID INT;
+    DECLARE BOOKSPERMONTH DECIMAL(5, 2);
+    DECLARE FINISHED INT DEFAULT 0;
+    DECLARE ALL_RENTS CURSOR FOR SELECT BOOK_ID FROM RENTS;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET FINISHED = 1;
+
+    OPEN ALL_RENTS;
+    WHILE (FINISHED = 0)
+        DO
+            FETCH ALL_RENTS INTO ID;
+            IF (FINISHED = 0) THEN
+                SELECT COUNT(*) FROM RENTS
+                WHERE BOOK_ID = ID
+                INTO COUNT;
+
+                SELECT DATEDIFF(MAX(RENT_DATE), MIN(RENT_DATE)) + 1 FROM RENTS
+                WHERE BOOK_ID = RENTS.RENT_ID
+                INTO DAYS;
+
+                SET BOOKSPERMONTH = COUNT / DAYS * 30;
+
+                IF (COUNT >= 2) THEN
+                    UPDATE BOOKS SET BESTSELLER = TRUE WHERE BOOK_ID = ID;
+                    COMMIT;
+                ELSE
+                    UPDATE BOOKS SET BESTSELLER = FALSE WHERE BOOK_ID = ID;
+                    COMMIT;
+
+                END IF;
+            END IF;
+        END WHILE;
+
+    CLOSE ALL_RENTS;
+
+END $$
+
+DELIMITER ;
+
+CALL UpdateBestsellers();
