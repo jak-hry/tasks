@@ -1,0 +1,9 @@
+CREATE INDEX books_title_idx ON BOOKS (TITLE);
+
+-- przed dodaniem indeksu
+EXPLAIN SELECT * FROM READERS WHERE FIRSTNAME = 'John';
+
+CREATE INDEX readers_name_idx ON READERS (FIRSTNAME, LASTNAME);
+
+-- po dodaniu indeksu
+EXPLAIN SELECT * FROM READERS WHERE FIRSTNAME = 'John';
