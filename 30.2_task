@@ -7,36 +7,44 @@ BEGIN
     DECLARE COUNT, DAYS, ID INT;
     DECLARE BOOKSPERMONTH DECIMAL(5, 2);
     DECLARE FINISHED INT DEFAULT 0;
-    DECLARE ALL_RENTS CURSOR FOR SELECT BOOK_ID FROM RENTS;
+    DECLARE ALL_BOOKS CURSOR FOR SELECT BOOK_ID FROM BOOKS;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET FINISHED = 1;
 
-    OPEN ALL_RENTS;
+    OPEN ALL_BOOKS;
     WHILE (FINISHED = 0)
         DO
-            FETCH ALL_RENTS INTO ID;
+            FETCH ALL_BOOKS INTO ID;
             IF (FINISHED = 0) THEN
-                SELECT COUNT(*) FROM RENTS
+                SELECT COUNT(*)
+                FROM RENTS
                 WHERE BOOK_ID = ID
                 INTO COUNT;
 
-                SELECT DATEDIFF(MAX(RENT_DATE), MIN(RENT_DATE)) + 1 FROM RENTS
-                WHERE BOOK_ID = RENTS.RENT_ID
-                INTO DAYS;
+                IF COUNT > 0 THEN
+                    SELECT DATEDIFF(MAX(RENT_DATE), MIN(RENT_DATE)) + 1
+                    FROM RENTS
+                    WHERE BOOK_ID = ID
+                    INTO DAYS;
 
-                SET BOOKSPERMONTH = COUNT / DAYS * 30;
+                    SET BOOKSPERMONTH = COUNT / DAYS * 30;
 
-                IF (COUNT >= 2) THEN
-                    UPDATE BOOKS SET BESTSELLER = TRUE WHERE BOOK_ID = ID;
-                    COMMIT;
+                    IF (COUNT >= 2 AND BOOKSPERMONTH >= 5) THEN
+                        UPDATE BOOKS SET BESTSELLER = TRUE WHERE BOOK_ID = ID;
+                        COMMIT;
+                    ELSE
+                        UPDATE BOOKS SET BESTSELLER = FALSE WHERE BOOK_ID = ID;
+                        COMMIT;
+                    END IF;
                 ELSE
                     UPDATE BOOKS SET BESTSELLER = FALSE WHERE BOOK_ID = ID;
                     COMMIT;
-
                 END IF;
+
             END IF;
+
         END WHILE;
 
-    CLOSE ALL_RENTS;
+    CLOSE ALL_BOOKS;
 
 END $$
 
