@@ -3,7 +3,7 @@ package com.crud.tasks.task;
 import com.crud.tasks.controller.TaskNotFoundException;
 import com.crud.tasks.domain.Task;
 import com.crud.tasks.repository.TaskRepository;
-import com.crud.tasks.service.DbService;
+import com.crud.tasks.trello.service.DbService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

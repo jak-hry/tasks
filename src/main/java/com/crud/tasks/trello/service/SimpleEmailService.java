@@ -1,4 +1,4 @@
-package com.crud.tasks.service;
+package com.crud.tasks.trello.service;
 
 import com.crud.tasks.domain.Mail;
 import lombok.RequiredArgsConstructor;
