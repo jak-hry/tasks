@@ -2,7 +2,7 @@ package com.crud.tasks.scheduler;
 
 import com.crud.tasks.domain.Mail;
 import com.crud.tasks.repository.TaskRepository;
-import com.crud.tasks.trello.service.SimpleEmailService;
+import com.crud.tasks.trello.service.SimpleMailService;
 import com.crud.tasks.trello.config.AdminConfig;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 public class EmailSchedulerTest {
 
     @Mock
-    private SimpleEmailService simpleEmailService;
+    private SimpleMailService simpleMailService;
 
     @Mock
     private TaskRepository taskRepository;
@@ -28,14 +28,14 @@ public class EmailSchedulerTest {
 
         //Given && When
         when(taskRepository.count()).thenReturn(0L);
-        EmailScheduler emailScheduler = new EmailScheduler(simpleEmailService, taskRepository, adminConfig);
+        EmailScheduler emailScheduler = new EmailScheduler(simpleMailService, taskRepository, adminConfig);
         emailScheduler.sendInformationEmail();
 
         //Then
-        verify(simpleEmailService, Mockito.times(1)).send(Mockito.any(Mail.class));
+        verify(simpleMailService, Mockito.times(1)).send(Mockito.any(Mail.class));
         verify(taskRepository).count();
         verify(adminConfig).getAdminMail();
-        verifyNoMoreInteractions(simpleEmailService, taskRepository, adminConfig);
+        verifyNoMoreInteractions(simpleMailService, taskRepository, adminConfig);
     }
 
     @Test
@@ -43,14 +43,14 @@ public class EmailSchedulerTest {
 
         //Given && When
         when(taskRepository.count()).thenReturn(1L);
-        EmailScheduler emailScheduler = new EmailScheduler(simpleEmailService, taskRepository, adminConfig);
+        EmailScheduler emailScheduler = new EmailScheduler(simpleMailService, taskRepository, adminConfig);
         emailScheduler.sendInformationEmail();
 
         //Then
-        verify(simpleEmailService, Mockito.times(1)).send(Mockito.any(Mail.class));
+        verify(simpleMailService, Mockito.times(1)).send(Mockito.any(Mail.class));
         verify(taskRepository).count();
         verify(adminConfig).getAdminMail();
-        verifyNoMoreInteractions(simpleEmailService, taskRepository, adminConfig);
+        verifyNoMoreInteractions(simpleMailService, taskRepository, adminConfig);
     }
 
     @Test
@@ -58,14 +58,14 @@ public class EmailSchedulerTest {
 
         //Given && When
         when(taskRepository.count()).thenReturn(5L);
-        EmailScheduler emailScheduler = new EmailScheduler(simpleEmailService, taskRepository, adminConfig);
+        EmailScheduler emailScheduler = new EmailScheduler(simpleMailService, taskRepository, adminConfig);
         emailScheduler.sendInformationEmail();
 
         //Then
-        verify(simpleEmailService, Mockito.times(1)).send(Mockito.any(Mail.class));
+        verify(simpleMailService, Mockito.times(1)).send(Mockito.any(Mail.class));
         verify(taskRepository).count();
         verify(adminConfig).getAdminMail();
-        verifyNoMoreInteractions(simpleEmailService, taskRepository, adminConfig);
+        verifyNoMoreInteractions(simpleMailService, taskRepository, adminConfig);
     }
 }
 
